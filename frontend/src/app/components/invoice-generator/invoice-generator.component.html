@@ -1,0 +1,54 @@
+<div class="container">
+  <h2>Create Invoice</h2>
+  
+  <div class="form-group">
+    <label>Customer Name:</label>
+    <input type="text" [(ngModel)]="customerName" placeholder="Enter customer name" class="form-control">
+  </div>
+
+  <div class="form-group">
+    <label>Date:</label>
+    <input type="date" [(ngModel)]="date" class="form-control">
+  </div>
+
+  <div class="service-selection">
+    <label>Add Service:</label>
+    <div class="input-group">
+      <select [(ngModel)]="selectedServiceId" class="form-control">
+        <option *ngFor="let service of availableServices" [value]="service.id">
+          {{ service.name }} - ${{ service.price }}
+        </option>
+      </select>
+      <button (click)="addService()" class="btn btn-primary">Add</button>
+    </div>
+  </div>
+
+  <div class="invoice-items" *ngIf="invoiceItems.length > 0">
+    <h3>Invoice Items</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of invoiceItems; let i = index">
+          <td>{{ item.name }}</td>
+          <td>${{ item.price }}</td>
+          <td><button (click)="removeItem(i)" class="btn btn-danger btn-sm">Remove</button></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>Total</th>
+          <th>${{ totalAmount }}</th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+    
+    <button (click)="saveInvoice()" class="btn btn-success btn-lg btn-block">Generate Invoice</button>
+  </div>
+</div>

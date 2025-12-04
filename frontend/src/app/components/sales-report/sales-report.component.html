@@ -1,0 +1,48 @@
+<div class="container">
+    <h2>Sales Report</h2>
+
+    <div class="filter-section">
+        <div class="form-group">
+            <label>From:</label>
+            <input type="date" [(ngModel)]="startDate" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>To:</label>
+            <input type="date" [(ngModel)]="endDate" class="form-control">
+        </div>
+        <button (click)="filterSales()" class="btn btn-primary">Filter</button>
+    </div>
+
+    <div class="summary-card">
+        <h3>Total Sales</h3>
+        <p class="total-amount">${{ totalSales.toFixed(2) }}</p>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Services</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let invoice of invoices">
+                <td>#{{ invoice.id }}</td>
+                <td>{{ invoice.date }}</td>
+                <td>{{ invoice.customerName }}</td>
+                <td>
+                    <span *ngFor="let item of invoice.items; let last = last">
+                        {{ item.name }}<span *ngIf="!last">, </span>
+                    </span>
+                </td>
+                <td>${{ invoice.totalAmount.toFixed(2) }}</td>
+            </tr>
+            <tr *ngIf="invoices.length === 0">
+                <td colspan="5" class="text-center">No sales found.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
