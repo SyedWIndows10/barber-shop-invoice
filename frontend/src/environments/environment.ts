@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:3000/api'
+    apiUrl: 'https://barber-shop-invoice.onrender.com/api'
 };
