@@ -1,0 +1,76 @@
+<div class="appointment-container">
+    <div class="appointment-card">
+        <h2>Book Appointment</h2>
+
+        <form (ngSubmit)="bookAppointment()">
+            <div class="form-group">
+                <label for="customerName">Customer Name</label>
+                <input type="text" id="customerName" [(ngModel)]="customerName" name="customerName" class="form-control"
+                    placeholder="Enter customer name" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointmentDate">Appointment Date</label>
+                    <input type="date" id="appointmentDate" [(ngModel)]="appointmentDate" name="appointmentDate"
+                        class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentTime">Appointment Time</label>
+                    <input type="time" id="appointmentTime" [(ngModel)]="appointmentTime" name="appointmentTime"
+                        class="form-control" required>
+                </div>
+            </div>
+
+            <div class="services-section">
+                <h3>Select Services</h3>
+                <div class="service-selector">
+                    <select [(ngModel)]="selectedServiceId" name="service" class="form-control">
+                        <option *ngFor="let service of availableServices" [value]="service.id">
+                            {{ service.name }} - ${{ service.price }}
+                        </option>
+                    </select>
+                    <button type="button" (click)="addService()" class="btn btn-secondary">
+                        Add Service
+                    </button>
+                </div>
+
+                <div class="selected-services" *ngIf="appointmentServices.length > 0">
+                    <h4>Selected Services</h4>
+                    <table class="services-table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of appointmentServices; let i = index">
+                                <td>{{ item.name }}</td>
+                                <td>${{ item.price }}</td>
+                                <td>
+                                    <button type="button" (click)="removeService(i)" class="btn-remove">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td><strong>Total</strong></td>
+                                <td colspan="2"><strong>${{ totalAmount }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Book Appointment</button>
+                <button type="button" (click)="resetForm()" class="btn btn-secondary">Reset</button>
+            </div>
+        </form>
+    </div>
+</div>

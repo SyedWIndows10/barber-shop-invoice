@@ -1,0 +1,149 @@
+<div class="appointments-container">
+    <div class="appointments-header">
+        <h2>My Appointments</h2>
+        <button (click)="bookNewAppointment()" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Book New Appointment
+        </button>
+    </div>
+
+    <div class="filters-card">
+        <div class="filters">
+            <div class="filter-group">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter" [(ngModel)]="statusFilter" (change)="filterAppointments()"
+                    class="form-control">
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="startDate">From Date</label>
+                <input type="date" id="startDate" [(ngModel)]="startDate" class="form-control">
+            </div>
+
+            <div class="filter-group">
+                <label for="endDate">To Date</label>
+                <input type="date" id="endDate" [(ngModel)]="endDate" class="form-control">
+            </div>
+
+            <div class="filter-actions">
+                <button (click)="filterAppointments()" class="btn btn-secondary">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="appointments-list" *ngIf="filteredAppointments.length > 0; else noAppointments">
+        <div class="appointment-card" *ngFor="let appointment of filteredAppointments">
+            <div class="appointment-header">
+                <div class="customer-info">
+                    <h3>{{ appointment.customerName }}</h3>
+                    <p class="customer-phone" *ngIf="appointment.customerPhone">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                            </path>
+                        </svg>
+                        {{ appointment.customerPhone }}
+                    </p>
+                    <span class="status-badge" [ngClass]="getStatusClass(appointment.status!)">
+                        {{ appointment.status }}
+                    </span>
+                </div>
+                <div class="appointment-id">#{{ appointment.id }}</div>
+            </div>
+
+            <div class="appointment-details">
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>{{ appointment.appointmentDate }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>{{ appointment.appointmentTime }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span>${{ appointment.totalAmount }}</span>
+                </div>
+            </div>
+
+            <div class="services-list">
+                <h4>Services:</h4>
+                <ul>
+                    <li *ngFor="let service of appointment.services">
+                        {{ service.name }} - ${{ service.price }}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="appointment-actions">
+                <button *ngIf="appointment.status === 'pending'" (click)="confirmAppointment(appointment)"
+                    class="btn btn-confirm">
+                    Confirm
+                </button>
+
+                <button *ngIf="appointment.status === 'pending'" (click)="rejectAppointment(appointment)"
+                    class="btn btn-reject">
+                    Reject
+                </button>
+
+                <button *ngIf="appointment.status === 'confirmed'" (click)="completeAppointment(appointment)"
+                    class="btn btn-complete">
+                    Mark as Completed
+                </button>
+
+                <button *ngIf="appointment.status === 'completed' && appointment.invoiceId"
+                    (click)="viewInvoice(appointment.invoiceId)" class="btn btn-invoice">
+                    View Invoice #{{ appointment.invoiceId }}
+                </button>
+
+                <button
+                    *ngIf="appointment.status !== 'cancelled' && appointment.status !== 'completed' && appointment.status !== 'rejected'"
+                    (click)="cancelAppointment(appointment)" class="btn btn-cancel">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noAppointments>
+        <div class="no-appointments">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <h3>No appointments found</h3>
+            <p>Book your first appointment to get started!</p>
+            <button (click)="bookNewAppointment()" class="btn btn-primary">Book Appointment</button>
+        </div>
+    </ng-template>
+</div>

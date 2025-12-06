@@ -86,19 +86,30 @@
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
-        gap: 16px;
+        gap: 1rem;
+        padding: 1rem;
     }
 
     .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .nav-links a {
+        width: 100%;
+        text-align: center;
+        display: block;
     }
 
     .user-menu {
         border-left: none;
         border-top: 1px solid #555;
-        padding-top: 12px;
+        padding-top: 1rem;
         padding-left: 0;
         margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        margin-top: 0.5rem;
     }
 }

@@ -62,6 +62,45 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 });
             }
         });
+
+        // Create appointments table
+        db.run(`CREATE TABLE IF NOT EXISTS appointments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            userId INTEGER,
+            customerName TEXT NOT NULL,
+            customerPhone TEXT NOT NULL,
+            appointmentDate TEXT NOT NULL,
+            appointmentTime TEXT NOT NULL,
+            services TEXT NOT NULL,
+            totalAmount REAL NOT NULL,
+            status TEXT DEFAULT 'pending',
+            barberId INTEGER,
+            invoiceId INTEGER,
+            createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (userId) REFERENCES users(id),
+            FOREIGN KEY (barberId) REFERENCES users(id),
+            FOREIGN KEY (invoiceId) REFERENCES invoices(id)
+        )`, (err) => {
+            if (err) {
+                console.error('Error creating appointments table: ' + err.message);
+            } else {
+                console.log('Appointments table ready');
+
+                // Add customerPhone column if it doesn't exist (migration)
+                db.run(`ALTER TABLE appointments ADD COLUMN customerPhone TEXT`, (err) => {
+                    if (err && !err.message.includes('duplicate column name')) {
+                        console.error('Error adding customerPhone column: ' + err.message);
+                    }
+                });
+
+                // Add barberId column if it doesn't exist (migration)
+                db.run(`ALTER TABLE appointments ADD COLUMN barberId INTEGER REFERENCES users(id)`, (err) => {
+                    if (err && !err.message.includes('duplicate column name')) {
+                        console.error('Error adding barberId column: ' + err.message);
+                    }
+                });
+            }
+        });
     }
 });
 

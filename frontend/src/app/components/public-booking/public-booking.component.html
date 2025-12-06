@@ -1,0 +1,114 @@
+<div class="booking-container">
+    <div class="booking-card">
+        <div class="header">
+            <h1>Book Your Appointment</h1>
+            <p>Choose your preferred barber, date, and services</p>
+        </div>
+
+        <div class="success-message" *ngIf="success">
+            <div class="success-icon">✓</div>
+            <h3>Appointment Request Submitted!</h3>
+            <p>Your appointment request has been sent to the barber. You will be contacted soon for confirmation.</p>
+        </div>
+
+        <div class="error-message" *ngIf="error && !success">
+            <span class="error-icon">⚠</span>
+            {{ error }}
+        </div>
+
+        <form *ngIf="!success" (ngSubmit)="submitAppointment()" class="booking-form">
+            <!-- Customer Information -->
+            <div class="form-section">
+                <h2>Your Information</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customerName">Full Name *</label>
+                        <input type="text" id="customerName" [(ngModel)]="customerName" name="customerName"
+                            placeholder="Enter your name" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Mobile Number *</label>
+                        <input type="tel" id="customerPhone" [(ngModel)]="customerPhone" name="customerPhone"
+                            placeholder="Enter your mobile number" required />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barber Selection -->
+            <div class="form-section">
+                <h2>Select Barber</h2>
+                <div class="form-group">
+                    <label for="barber">Choose Your Barber *</label>
+                    <select id="barber" [(ngModel)]="selectedBarberId" name="barber" (change)="onBarberChange()"
+                        required>
+                        <option [value]="null">-- Select a barber --</option>
+                        <option *ngFor="let barber of barbers" [value]="barber.id">
+                            {{ barber.username }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Date and Time Selection -->
+            <div class="form-section">
+                <h2>Select Date & Time</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Appointment Date *</label>
+                        <input type="date" id="date" [(ngModel)]="selectedDate" name="date" [min]="minDate"
+                            (change)="onDateChange()" required />
+                    </div>
+                </div>
+
+                <div class="time-slots" *ngIf="availableSlots.length > 0">
+                    <label>Available Time Slots *</label>
+                    <div class="slots-grid">
+                        <button type="button" *ngFor="let slot of availableSlots" class="time-slot"
+                            [class.selected]="selectedTime === slot" (click)="selectedTime = slot">
+                            {{ slot }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="no-slots"
+                    *ngIf="selectedDate && selectedBarberId && availableSlots.length === 0 && !loading">
+                    <p>No available time slots for this date. Please choose another date.</p>
+                </div>
+            </div>
+
+            <!-- Services Selection -->
+            <div class="form-section">
+                <h2>Select Services</h2>
+                <div class="services-grid">
+                    <div *ngFor="let item of selectedServices" class="service-card" [class.selected]="item.selected"
+                        (click)="item.selected = !item.selected">
+                        <div class="service-info">
+                            <h3>{{ item.service.name }}</h3>
+                            <p class="price">${{ item.service.price }}</p>
+                            <p class="duration" *ngIf="item.service.duration">{{ item.service.duration }} min</p>
+                        </div>
+                        <div class="checkbox">
+                            <span *ngIf="item.selected">✓</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Amount -->
+            <div class="total-section" *ngIf="getTotalAmount() > 0">
+                <div class="total-row">
+                    <span>Total Amount:</span>
+                    <span class="total-amount">${{ getTotalAmount() }}</span>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="submit" class="submit-btn" [disabled]="!isFormValid() || loading">
+                    <span *ngIf="!loading">Book Appointment</span>
+                    <span *ngIf="loading">Submitting...</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
